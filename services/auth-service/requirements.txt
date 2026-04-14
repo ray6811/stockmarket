@@ -1,4 +1,5 @@
 fastapi==0.95.2
 uvicorn[standard]==0.22.0
 pyjwt==2.8.0
-passlib[bcrypt]==1.7.5
+# passlib 1.7.5 not available on PyPI; pin to latest 1.7.x that exists
+passlib[bcrypt]==1.7.4
