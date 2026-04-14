@@ -10,12 +10,7 @@ services:
       - indicator-service
       - price-action-service
     
-  auth-service:
-    build: ./services/auth-service
-    ports:
-      - "8000:8000"
-    environment:
-      - AUTH_SECRET=devsecret
+  # auth-service removed: frontend will run without auth in this development setup
 
   indicator-service:
     build: ./services/indicator-service
@@ -75,8 +70,6 @@ services:
     build: ./frontend
     ports:
       - "3000:80"
-    depends_on:
-      - auth-service
     environment:
       - REACT_APP_API_URL=http://localhost:8001
     healthcheck:

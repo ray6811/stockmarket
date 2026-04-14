@@ -1,38 +1,9 @@
-import React, {useEffect, useState} from 'react'
-import Login from './Login'
+import React, {useState} from 'react'
 
 export default function App(){
-  const [authenticated, setAuthenticated] = useState(false)
-  const [checking, setChecking] = useState(true)
   const [dark, setDark] = useState(true)
 
-  useEffect(()=>{
-    async function verify(){
-      const token = localStorage.getItem('token')
-      if(!token){ setChecking(false); return }
-      try{
-        const API = process.env.REACT_APP_AUTH_URL || 'http://localhost:8000'
-        console.debug('Verifying token with', `${API}/verify`)
-        const resp = await fetch(`${API}/verify`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({token})})
-        if(resp.ok){ setAuthenticated(true) }
-      }catch(e){ console.warn('verify failed', e) }
-      setChecking(false)
-    }
-    verify()
-  },[])
-
-  function onLogin(){
-    setAuthenticated(true)
-  }
-
-  function logout(){
-    localStorage.removeItem('token')
-    setAuthenticated(false)
-  }
-
-  if(checking) return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 text-white">Checking auth...</div>
-
-  if(!authenticated) return <Login onLogin={onLogin} />
+  // Auth removed: frontend opens directly to dashboard in local/dev environment
 
   return (
     <div className={`min-h-screen p-6 ${dark? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}`}>

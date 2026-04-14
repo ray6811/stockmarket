@@ -18,9 +18,7 @@ docker-compose up
 
 Each service exposes a port per the `docker-compose.yml`.
 
-Auth demo credentials:
-- username: `admin`
-- password: `password`
+Auth removed for this development build: frontend opens directly to the dashboard.
 
 
 See `k8s/` for example Kubernetes manifests for `signal-engine-service`.
