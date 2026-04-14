@@ -9,20 +9,28 @@ export default function Login({onLogin}){
     e.preventDefault()
     setError(null)
     try{
-      const resp = await fetch('http://localhost:8000/login', {
+      const API = process.env.REACT_APP_AUTH_URL || 'http://localhost:8000'
+      const resp = await fetch(`${API}/login`, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({username, password})
       })
       if(!resp.ok){
-        const body = await resp.json().catch(()=>({detail:'auth failed'}))
-        throw new Error(body.detail || 'auth failed')
+        const text = await resp.text().catch(()=>null)
+        let message = 'Authentication failed'
+        try{
+          const j = text ? JSON.parse(text) : null
+          message = j?.detail || j?.message || text || message
+        }catch(_){
+          message = text || message
+        }
+        throw new Error(message)
       }
       const data = await resp.json()
       localStorage.setItem('token', data.access_token)
       onLogin()
     }catch(err){
-      setError(err.message)
+      setError(err.message || 'network error')
     }
   }
 
