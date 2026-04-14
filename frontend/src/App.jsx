@@ -11,7 +11,9 @@ export default function App(){
       const token = localStorage.getItem('token')
       if(!token){ setChecking(false); return }
       try{
-        const resp = await fetch('http://localhost:8000/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({token})})
+        const API = process.env.REACT_APP_AUTH_URL || 'http://localhost:8000'
+        console.debug('Verifying token with', `${API}/verify`)
+        const resp = await fetch(`${API}/verify`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({token})})
         if(resp.ok){ setAuthenticated(true) }
       }catch(e){ console.warn('verify failed', e) }
       setChecking(false)
