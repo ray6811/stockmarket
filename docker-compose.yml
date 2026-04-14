@@ -1,0 +1,94 @@
+version: '3.8'
+services:
+  signal-engine-service:
+    build: ./services/signal-engine-service
+    ports:
+      - "8001:8001"
+    environment:
+      - LOG_LEVEL=info
+    depends_on:
+      - indicator-service
+      - price-action-service
+    
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "8000:8000"
+    environment:
+      - AUTH_SECRET=devsecret
+
+  indicator-service:
+    build: ./services/indicator-service
+    ports:
+      - "8002:8002"
+
+  price-action-service:
+    build: ./services/price-action-service
+    ports:
+      - "8003:8003"
+
+  backtesting-service:
+    build: ./services/backtesting-service
+    ports:
+      - "8004:8004"
+
+  notification-service:
+    build: ./services/notification-service
+    ports:
+      - "8005:8005"
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: stocks
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth-service
+    environment:
+      - REACT_APP_API_URL=http://localhost:8001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
