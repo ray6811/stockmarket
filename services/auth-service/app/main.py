@@ -2,6 +2,7 @@ import os
 import time
 from typing import Optional
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import jwt
 import logging
@@ -13,6 +14,15 @@ SECRET = os.getenv("AUTH_SECRET", "devsecret")
 ALGORITHM = "HS256"
 
 app = FastAPI(title="Auth Service")
+
+# Allow browser-based frontend to call this service
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class LoginRequest(BaseModel):
@@ -35,11 +45,22 @@ async def login(req: LoginRequest):
     raise HTTPException(status_code=401, detail='invalid credentials')
 
 
+
+
+class TokenRequest(BaseModel):
+    token: str
+
+
 @app.post('/verify')
-async def verify(token: str):
+async def verify(req: TokenRequest):
     try:
-        data = jwt.decode(token, SECRET, algorithms=[ALGORITHM])
+        data = jwt.decode(req.token, SECRET, algorithms=[ALGORITHM])
         return {"valid": True, "sub": data.get('sub')}
     except Exception as e:
         logger.exception('token verify failed')
         raise HTTPException(status_code=401, detail='invalid token')
+
+
+@app.get('/health')
+async def health():
+    return {"status": "ok"}
