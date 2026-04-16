@@ -33,6 +33,13 @@
       </div>
     </div>
     <script>
+      // Provide a safe global fallback for `logout` if any legacy code calls it.
+      if(typeof window.logout === 'undefined'){
+        window.logout = function(){
+          try{ localStorage.removeItem('token') }catch(e){}
+          try{ console.info('logout noop'); }catch(e){}
+        }
+      }
       // show runtime errors in the page so a blank screen can be diagnosed quickly
       window.addEventListener('error', function (e) {
         try{

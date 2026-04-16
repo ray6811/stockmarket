@@ -21,7 +21,6 @@ export default function App(){
 
           <div className="flex items-center gap-3">
             <button onClick={()=>setDark(d=>!d)} className="px-3 py-1 rounded bg-gray-800">Toggle Theme</button>
-            <button onClick={logout} className="px-3 py-1 rounded bg-rose-600">Logout</button>
           </div>
         </header>
 
