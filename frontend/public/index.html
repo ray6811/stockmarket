@@ -8,6 +8,42 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static fallback content shown if JS fails -->
+      <style>
+        body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+        .sg-hero{background:linear-gradient(135deg,#0f172a,#0b1220);color:#fff;padding:48px;text-align:center}
+        .sg-card{max-width:1100px;margin:24px auto;padding:24px;background:#0b1220;border-radius:10px}
+      </style>
+      <div class="sg-hero">
+        <h1 style="font-size:28px;margin:0">Stock Game Changer</h1>
+        <p style="color:#9ca3af;margin-top:8px">Dashboard is loading — if this message persists, JavaScript may have failed to run.</p>
+      </div>
+      <div class="sg-card">
+        <h2 style="margin:0 0 8px 0">Live: RELIANCE</h2>
+        <p style="color:#9ca3af;margin:0">Chart placeholder — enable JavaScript or check console for errors.</p>
+      </div>
+    </div>
   </body>
 </html>
+    <div id="root">
+      <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;display:flex;align-items:center;justify-content:center;height:100vh;background:#0f172a;color:#fff;flex-direction:column;">
+        <h1 style="font-size:20px;margin:0 0 8px">Stock Game Changer</h1>
+        <p style="opacity:.8;margin:0 0 12px">Loading app... if this stays visible, check console for errors.</p>
+      </div>
+    </div>
+    <script>
+      // show runtime errors in the page so a blank screen can be diagnosed quickly
+      window.addEventListener('error', function (e) {
+        try{
+          var root = document.getElementById('root')
+          root.innerHTML = '<pre style="white-space:pre-wrap;color:#fff;background:#111;padding:16px">JS Error: ' + (e && e.message ? e.message : String(e)) + '\nSee console for stack.</pre>'
+        }catch(_){/* ignore */}
+      })
+      window.addEventListener('unhandledrejection', function(ev){
+        try{
+          var root = document.getElementById('root')
+          root.innerHTML = '<pre style="white-space:pre-wrap;color:#fff;background:#111;padding:16px">Unhandled Promise Rejection: ' + (ev && ev.reason ? ev.reason : String(ev)) + '</pre>'
+        }catch(_){/* ignore */}
+      })
+    </script>
